@@ -1,20 +1,29 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import {TypeOrmModule} from "@nestjs/typeorm";
+import { ProductsModule } from './products/products.module';
 
-import { TodoitemsModule } from './todoitems/todoitems.module';
+import 'dotenv/config'
 
-const databaseUrl =
-  process.env.DATABASE_URL || 'mongodb://localhost:27017/test';
 
 @Module({
   imports: [
-    MongooseModule.forRoot(databaseUrl),
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: process.env.DB_HOST,
+      port: Number(process.env.DB_PORT),
+      password: process.env.DB_PASS,
+      username: process.env.DB_USERNAME,
+      entities: [],
+      database: process.env.DB_DATEBASE,
+      synchronize: false,
+      logging: false,
+    }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
     }),
-    TodoitemsModule,
+    ProductsModule,
   ],
   controllers: [],
   providers: [],
